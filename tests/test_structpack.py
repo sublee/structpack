@@ -1,14 +1,13 @@
-
 import structpack
 
 
 def test_version():
     assert structpack.__version__ == '1.1.0'
 
-'''
-A trivial example.
-'''
+
 class Point(structpack.msg):
+    """A trivial example."""
+
     x = structpack.float
     y = structpack.float
     z = structpack.float
@@ -39,12 +38,11 @@ def test_point_names():
     assert p1.z == p2.z
 
 
-
-'''
-structpack can serialize nested objects, if those objects themselves
-are serializable.
-'''
 class Circle(structpack.msg):
+    """structpack can serialize nested objects, if those objects themselves
+    are serializable.
+    """
+
     center = structpack.child(Point)
     radius = structpack.float
 
@@ -75,18 +73,21 @@ def test_circle_names():
     assert c1.radius == c2.radius
 
 
-
 class NestedMessage(structpack.msg):
+
     a = structpack.str
     b = structpack.float
+
     def __init__(self, a, b):
         self.a = a
         self.b = b
+
     def __eq__(self, obj):
         return self.a == obj.a and self.b == obj.b
 
 
 class TestMessage(structpack.msg):
+
     a = structpack.str
     b = structpack.int
     c = structpack.float
@@ -107,18 +108,17 @@ class TestMessage(structpack.msg):
 
 def test():
     # create some object
-    m = TestMessage('Hi!', 10, 3.14, [4, 5], {'one': 0.999, 'two': 2.0001}, [NestedMessage('foo', 2.71), NestedMessage('bar', -1)], NestedMessage('baz', 8))
-
+    m = TestMessage('Hi!', 10, 3.14, [4, 5], {'one': 0.999, 'two': 2.0001},
+                    [NestedMessage('foo', 2.71), NestedMessage('bar', -1)],
+                    NestedMessage('baz', 8))
     # serialize it
     json = m.pack()
     print json
     print type(NestedMessage)
-    assert json == ('Hi!', 10, 3.14, (4, 5), {'one': 0.999, 'two': 2.0001}, (('foo', 2.71), ('bar', -1)), ('baz', 8))
-
+    assert json == ('Hi!', 10, 3.14, (4, 5), {'one': 0.999, 'two': 2.0001},
+                    (('foo', 2.71), ('bar', -1)), ('baz', 8))
     # unserialize it
     m2 = TestMessage.load(json)
-
-
     # it's the same!
     assert m.a == m2.a
     assert m.b == m2.b
@@ -137,13 +137,12 @@ def test_inheritance():
     b = Bar()
     b.a = 1
     b.b = 2
-
     data = b.pack()
     assert data == (1, 2)
-
     b2 = b.load(data)
     assert b2.a == 1
     assert b2.b == 2
+
 
 def test_inheritance_override():
     class Foo(structpack.msg):
@@ -154,8 +153,5 @@ def test_inheritance_override():
     b.a = 'hi'
     data = b.pack()
     assert data == ('hi',)
-
     b2 = b.load(data)
     assert b2.a == 'hi'
-
-

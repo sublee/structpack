@@ -1,6 +1,7 @@
-
 class PackType(object):
+
     __id = 0
+
     def __init__(self):
         PackType.__id += 1
         self.id = PackType.__id
@@ -10,6 +11,7 @@ class PackType(object):
 
 
 class PrimitiveType(PackType):
+
     @staticmethod
     def load(a, **kwargs):
         return a
@@ -22,19 +24,23 @@ class PrimitiveType(PackType):
 class Bool(PrimitiveType):
     pass
 
+
 class Int(PrimitiveType):
     pass
 
+
 class Float(PrimitiveType):
     pass
+
 
 class Str(PrimitiveType):
     pass
 
 
 class List(PackType):
+
     def __init__(self, cls):
-        PackType.__init__(self)
+        super(List, self).__init__()
         self.cls = cls
 
     def load(self, a, **kwargs):
@@ -45,23 +51,27 @@ class List(PackType):
 
 
 class Dict(PackType):
+
     def __init__(self, keycls, valcls):
-        PackType.__init__(self)
+        super(Dict, self).__init__()
         self.keycls = keycls
         self.valcls = valcls
 
     def load(self, a, **kwargs):
-        return {self.keycls.load(k, **kwargs): self.valcls.load(v, **kwargs)
+        return {
+            self.keycls.load(k, **kwargs): self.valcls.load(v, **kwargs)
             for k, v in a.iteritems()}
 
     def pack(self, a, **kwargs):
-        return {self.keycls.pack(k, **kwargs): self.valcls.pack(v, **kwargs)
+        return {
+            self.keycls.pack(k, **kwargs): self.valcls.pack(v, **kwargs)
             for k, v in a.iteritems()}
 
 
 class Reference(PackType):
+
     def __init__(self, cls):
-        PackType.__init__(self)
+        super(Reference, self).__init__()
         self.cls = cls
         self.load = cls.load
         self.pack = cls.pack
@@ -83,6 +93,7 @@ class MessageMeta(type):
 
 
 class Message(object):
+
     __metaclass__ = MessageMeta
 
     @classmethod
@@ -98,15 +109,19 @@ class Message(object):
 
     def pack(self, with_names=False):
         if with_names:
-            return {d.name: d.pack(getattr(self, d.name), with_names=with_names)
+            return {
+                d.name: d.pack(getattr(self, d.name), with_names=with_names)
                 for d in self._struct_members}
         else:
-            return tuple(d.pack(getattr(self, d.name), with_names=with_names)
+            return tuple(
+                d.pack(getattr(self, d.name), with_names=with_names)
                 for d in self._struct_members)
 
 
 class Data(object):
+
     __version__ = '1.1.0'
+
     msg = Message
 
     @property
