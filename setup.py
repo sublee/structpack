@@ -40,4 +40,5 @@ setup(
     ],
     tests_require=['pytest'],
     cmdclass={'test': PyTest},
+    zip_safe=False,  # structpack is zip-safe, but i hate egg.
 )
